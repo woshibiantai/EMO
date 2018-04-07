@@ -1,0 +1,3 @@
+model_checkpoint_path: "C:\\Users\\jonathanWindowsHome\\Jupyter\\Computer Vision Project\\resnet-emotions-Jaffe\\jaffe-models\\model_resnet_jaffe-34000"
+all_model_checkpoint_paths: "C:\\Users\\jonathanWindowsHome\\Jupyter\\Computer Vision Project\\resnet-emotions-Jaffe\\jaffe-models\\model_resnet_jaffe-33800"
+all_model_checkpoint_paths: "C:\\Users\\jonathanWindowsHome\\Jupyter\\Computer Vision Project\\resnet-emotions-Jaffe\\jaffe-models\\model_resnet_jaffe-34000"
