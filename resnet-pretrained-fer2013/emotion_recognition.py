@@ -1,4 +1,4 @@
-# A large portion of this code comes from the tf-learn example page:
+# This code comes primarily from tflearn's guide to resnet which can be found below.
 # https://github.com/tflearn/tflearn/blob/master/examples/images/residual_network_cifar10.py
 
 import tflearn
