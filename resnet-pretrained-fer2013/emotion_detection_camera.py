@@ -1,7 +1,7 @@
 import numpy as np
 import tflearn
 import operator
-import tflearn.data_preprocessing import ImagePreprocessing
+from tflearn.data_preprocessing import ImagePreprocessing
 from collections import deque
 
 import cv2
@@ -38,7 +38,7 @@ class RealtimeEmotionDetection:
         for data in self.emotions_deque:
             emotion_values[data[1]] += data[0]
 
-        result = max(emotion_values.iteritems(), key=operator.itemgetter(1))[0]
+        result = max(emotion_values.items(), key=operator.itemgetter(1))[0]
         return result
 
     def image_processing(self, roi_gray, img):
@@ -50,7 +50,7 @@ class RealtimeEmotionDetection:
         predicted_emotion = self.emotion_smoothing(predicted_emotions)
 
         font = cv2.FONT_HERSHEY_DUPLEX
-        cv2.putText(img, "Current Detected Emotion: " + predicted_emotion, (50,450), font, 1, (255, 255, 255), 2, cv2.CV_AA)
+        cv2.putText(img, "Current Detected Emotion: " + predicted_emotion, (50,450), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
         cv2.imshow('img', img)
 
     def run(self):
@@ -65,6 +65,7 @@ class RealtimeEmotionDetection:
         img_aug.add_random_flip_leftright()
 
         # Resnet model below:  Adapted from tflearn website
+        self.n = 5 #32 layer resnet
 
         # Building Residual Network
         net = tflearn.input_data(shape=[None, 48, 48, 1], data_preprocessing=img_prep, data_augmentation=img_aug)
@@ -90,7 +91,7 @@ class RealtimeEmotionDetection:
 
         self.model.load('model.tfl')
 
-        face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default')
+        face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
         cap = cv2.VideoCapture(0)
 
         #Main Loop where we will be capturing live webcam feed, crop image and process the image for emotion recognition on trained model
@@ -102,7 +103,7 @@ class RealtimeEmotionDetection:
                 cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
                 roi_gray = gray[y:y + h, x:x + w]
                 roi_color = img[y:y + h, x:x + w]
-                self.process_image(roi_gray, img)
+                self.image_processing(roi_gray, img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
@@ -110,5 +111,5 @@ class RealtimeEmotionDetection:
         cv2.destroyAllWindows()
 
 if (__name__ == "__main__"):
-    realTimeEmotionDetection = realTimeEmotionDetection()
-    realTimeEmotionDetection.run()
+    realtimeEmotionDetection = RealtimeEmotionDetection()
+    realtimeEmotionDetection.run()
