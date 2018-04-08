@@ -3,6 +3,8 @@ import numpy as np
 from numpy import genfromtxt
 from tflearn.data_preprocessing import ImagePreprocessing
 import itertools
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 
@@ -41,54 +43,69 @@ def plot_confusion_matrix(cm, classes,
     plt.xlabel('Predicted label')
 
 if __name__ == "__main__":
-	n = 5
+    n = 5
 
-	X_test = np.asarray(genfromtxt('data/Test_Data.csv', delimiter=' ',  skip_header=1,  dtype=float))
-	Y_true = np.asarray(genfromtxt('data/Test_Labels.csv', delimiter=',', skip_header=1, dtype=int))
+    X_test = np.asarray(genfromtxt('data/Test_Data.csv', delimiter=' ',  skip_header=1,  dtype=float))
+    Y_true = np.asarray(genfromtxt('data/Test_Labels.csv', delimiter=' ', skip_header=1, dtype=int))
+    Y_test = np.asarray(genfromtxt('data/Test_Labels.csv', delimiter=' ', skip_header=1, dtype=int))
 
-	X_test = X_test.reshape([-1, 48, 48, 1])
-	Y_test = tflearn.data_utils.to_categorical(Y_true, 7)
+    X_test = X_test.reshape([-1, 48, 48, 1])
+    Y_test = tflearn.data_utils.to_categorical(Y_test, 7)
 
-	net = tflearn.input_data(shape=[None, 48, 48, 1])
-	net = tflearn.conv_2d(net, nb_filter=16, filter_size=3, regularizer='L2', weight_decay=0.0001)
-	net = tflearn.residual_block(net, n, 16)
-	net = tflearn.residual_block(net, 1, 32, downsample=True)
-	net = tflearn.residual_block(net, n-1, 32)
-	net = tflearn.residual_block(net, 1, 64, downsample=True)
-	net = tflearn.residual_block(net, n-1, 64)
-	net = tflearn.batch_normalization(net)
-	net = tflearn.activation(net, 'relu')
-	net = tflearn.global_avg_pool(net)
+    print("real time image processing of image data")
+    # Real-time preprocessing of the image data
+    img_prep = ImagePreprocessing()
+    img_prep.add_featurewise_zero_center()
+    img_prep.add_featurewise_stdnorm()
 
-	net = tflearn.fully_connected(net, 7, activation='softmax')
-	mom = tflearn.Momentum(learning_rate=0.1, lr_decay=0.0001, decay_step=32000, staircase=True, momentum=0.9)
-	net = tflearn.regression(net, optimizer=mom,
-							loss='categorical_crossentropy')
+    print("real time data augmentation")
+    # Real-time data augmentation
+    img_aug = tflearn.ImageAugmentation()
+    img_aug.add_random_flip_leftright()
 
-	model = tflearn.DNN(net, checkpoint_path='models/model_resnet_emotion',
-						max_checkpoints=20, tensorboard_verbose=0,
-						clip_gradients=0.)
+    print("building ResNet")
 
-	#loading trained model
-	model.load('model.tfl')
+    net = tflearn.input_data(shape=[None, 48, 48, 1], data_preprocessing=img_prep, data_augmentation=img_aug)
+    net = tflearn.conv_2d(net, nb_filter=16, filter_size=3, regularizer='L2', weight_decay=0.0001)
+    net = tflearn.residual_block(net, n, 16)
+    net = tflearn.residual_block(net, 1, 32, downsample=True)
+    net = tflearn.residual_block(net, n-1, 32)
+    net = tflearn.residual_block(net, 1, 64, downsample=True)
+    net = tflearn.residual_block(net, n-1, 64)
+    net = tflearn.batch_normalization(net)
+    net = tflearn.activation(net, 'relu')
+    net = tflearn.global_avg_pool(net)
 
-	#testing the accuracy of the trained model
-	score = model.evaluate(X_test, Y_test)
-	print ('Test accuracy: ', score)
+    net = tflearn.fully_connected(net, 7, activation='softmax')
+    mom = tflearn.Momentum(learning_rate=0.1, lr_decay=0.0001, decay_step=32000, staircase=True, momentum=0.9)
+    net = tflearn.regression(net, optimizer=mom,
+                            loss='categorical_crossentropy')
 
-	prediction = model.predict(X_test)
+    model = tflearn.DNN(net, checkpoint_path='models/model_resnet_emotion',
+                        max_checkpoints=20, tensorboard_verbose=0,
+                        clip_gradients=0.)
 
-	#convert probability vector to class vector (rmb to use the class vector not the one hot label vector for y-test)
-	Y_predicted = np.argmax(prediction, axis=1)
-	print ('Correct Labels:', Y_true)
-	print ('Pred Labels:', Y_predicted)
+    #loading trained model
+    model.load('fer2013-model/model.tfl')
 
-	#labels for confusion matrix
-	emotions = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
+    #testing the accuracy of the trained model
+    print("evaluating...................")
+    score = model.evaluate(X_test, Y_test)
+    print ('Test accuracy: ', score)
 
-	cnf_matrix = confusion_matrix(Y_true, Y_predicted)
-	np.set_printoptions(precision=2)
-	plot_confusion_matrix(cnf_matrix, classes=emotions, normalize=True,
+    prediction = model.predict(X_test)
+
+    #convert probability vector to class vector (rmb to use the class vector not the one hot label vector for y-test)
+    Y_predicted = np.argmax(prediction, axis=1)
+    print ('Correct Labels:', Y_true)
+    print ('Pred Labels:', Y_predicted)
+
+    #labels for confusion matrix
+    emotions = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
+
+    cnf_matrix = confusion_matrix(Y_true, Y_predicted)
+    np.set_printoptions(precision=2)
+    plot_confusion_matrix(cnf_matrix, classes=emotions, normalize=True,
                       title='Normalized confusion matrix')
 
-	plt.show()
+    plt.show()
