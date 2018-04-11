@@ -89,7 +89,7 @@ class RealtimeEmotionDetection:
                             max_checkpoints=10, tensorboard_verbose=0,
                             clip_gradients=0.)
 
-        self.model.load('model.tfl')
+        self.model.load('fer2013-rafd-jaffe-model/model.tfl')
 
         face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
         cap = cv2.VideoCapture(0)

@@ -13,10 +13,11 @@ import cv2
 This Class defines the methods necessary for real-time emotion detection of video captured through a webcam.
 We use OpenCV's haar cascade classifier to recognize faces and crop the image of a face.
 Then we take the face image and use our trained model to predict the most probable emotion associated with the image.
-We also use a queue/deque to keep the 10 most recent emotions that are predicted and then choose the emotion with highest incidence/probability
-to be printed to screen.
+We also use a queue/deque to keep the 10 most recent emotions that are predicted and then choose the emotion with highest
+incidence/probability to be printed to screen.
 
 """
+
 class RealtimeEmotionDetection:
 
     def __init__(self):
