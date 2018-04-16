@@ -45,9 +45,9 @@ def plot_confusion_matrix(cm, classes,
 if __name__ == "__main__":
     n = 5
 
-    X_test = np.asarray(genfromtxt('fer2013_RafD_jaffe_data/fer2013_rafd_jaffe_Test_Data.csv', delimiter=' ',  skip_header=1,  dtype=float))
-    Y_true = np.asarray(genfromtxt('fer2013_RafD_jaffe_data/fer2013_rafd_jaffe_Test_Labels.csv', delimiter=' ', skip_header=1, dtype=int))
-    Y_test = np.asarray(genfromtxt('fer2013_RafD_jaffe_data/fer2013_rafd_jaffe_Test_Labels.csv', delimiter=' ', skip_header=1, dtype=int))
+    X_test = np.asarray(genfromtxt('Custom_Emotions_Test_Data/test_data.csv', delimiter=' ',  skip_header=1,  dtype=float))
+    Y_true = np.asarray(genfromtxt('Custom_Emotions_Test_Data/test_labels.csv', delimiter=' ', skip_header=1, dtype=int))
+    Y_test = np.asarray(genfromtxt('Custom_Emotions_Test_Data/test_labels.csv', delimiter=' ', skip_header=1, dtype=int))
 
     X_test = X_test.reshape([-1, 48, 48, 1])
     Y_test = tflearn.data_utils.to_categorical(Y_test, 7)

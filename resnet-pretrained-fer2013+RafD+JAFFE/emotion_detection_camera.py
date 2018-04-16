@@ -50,7 +50,8 @@ class RealtimeEmotionDetection:
         predicted_emotion = self.emotion_smoothing(predicted_emotions)
 
         font = cv2.FONT_HERSHEY_DUPLEX
-        cv2.putText(img, "Current Detected Emotion: " + predicted_emotion, (50,450), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.putText(img, "Current Detected Emotion: ", (50,450), font, 1, (0, 0, 0), 2, cv2.LINE_AA)
+        cv2.putText(img, predicted_emotion, (50,490), font, 1, (0, 0, 255), 2, cv2.LINE_AA)
         cv2.imshow('img', img)
 
     def run(self):
