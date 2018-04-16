@@ -1,0 +1,3 @@
+model_checkpoint_path: "D:\\Projects\\cv\\EMO\\resnet-finetune-Jaffe\\modelv1.tfl"
+all_model_checkpoint_paths: "D:\\Projects\\cv\\EMO\\resnet-finetune-Jaffe\\finetuned-model-v1\\resnet_jaffe_v1-35200"
+all_model_checkpoint_paths: "D:\\Projects\\cv\\EMO\\resnet-finetune-Jaffe\\modelv1.tfl"

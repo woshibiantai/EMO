@@ -1,0 +1,10 @@
+loading data
+done loading data
+reshaping images
+one-hot encoding the labels
+real time image processing of image data
+real time data augmentation
+building ResNet
+training..........
+evaluating...................
+Test accuracy before fine-tuning:  [0.0731707289814949]
